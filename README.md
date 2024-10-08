@@ -31,6 +31,10 @@ When a client sends a `GET filename` command to the server, the server:
 - Searches its archive for the file and provides the client with the best source (either a peer or the server).
 - If a peer holds the file, the client starts a new thread to download it from the peer. The checksum is verified to ensure a valid transfer, and the server is notified to update the list of available sources for that file.
 
+![MSC Diagram](MSC.png)
+
+![SDL Diagram](SDL.png)
+
 ## 4. Testing
 
 To verify the functionality, follow these steps:
