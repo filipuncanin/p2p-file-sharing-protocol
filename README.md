@@ -1,32 +1,49 @@
-Project Overview
-Implementation of a simple file-sharing protocol on a peer-to-peer network.
+# Peer-to-Peer File Sharing Protocol
 
-This project addresses the problem of an overloaded server and congested paths on a centralized network by dividing files into segments. Once a segment is received, each computer becomes a server that can transfer that segment, thus distributing the load. However, the network includes one centralized server responsible for coordinating segment transfers.
+## Project Overview
 
-1. Key Features
-Each file is divided into 16KB segments, and a checksum is calculated for each segment. These details are stored in a single file on the coordinating server.
-The logic on the coordinating server tracks which computers have available copies of each file segment.
-The file transfer process begins with the application requesting segment location data from the server one segment at a time. After receiving the location of a segment, the application transfers it from the specified computer to the local machine. Upon successful transfer, the coordinating server is notified that the segment is now available on the local machine, and the process continues with the next segment. The checksum is verified after transferring each segment.
-2. Concept of the Solution
-The first step is to launch the server application, which is responsible for managing the entire network. Upon startup, the server prepares the necessary environment for further operation and client servicing.
+This project implements a simple file-sharing protocol on a peer-to-peer (P2P) network. It addresses the problem of overloaded servers and congested paths in a centralized network by dividing files into segments. Once a segment is received, each peer becomes a server that can distribute that segment, achieving load distribution. The network includes a central server responsible for coordinating segment transfers.
 
-When the user starts the application, they are connected to the centralized server. Upon requesting to download a file, the application sends a message to the server informing it of the requested file. The server then responds by providing the resource from which the file should be downloaded. If no peer on the network possesses the requested file, the download will be executed directly from the server. Otherwise, the file will be retrieved from another peer within the network.
+## 1. Key Features
 
-3. Description of the Solution
-When the central server is started, the first step is to go through all the files stored in the system, divide them into 16KB segments, calculate the checksum for each segment, and store all the resulting data in a specific folder. Afterward, the server makes all the necessary preparations for listening to incoming client connections. Each client that connects is assigned a separate thread that will handle further interactions. Additionally, a thread is created to monitor the presence of all registered clients, ensuring that no client has disconnected from the network. If a disconnected client is found, it is removed from the list of peers from which segments can be obtained.
+- Files are divided into 16KB segments, with a checksum calculated for each segment. These details are stored in a file on the coordinating server.
+- The server maintains a record of which peers hold available copies of each file segment.
+- The file transfer process involves the client requesting segment location data from the server, transferring segments from the identified peer to the local machine, verifying the transfer using the checksum, and updating the server about the availability of the segment on the local machine.
 
-When the client application is started, it connects to the central server and sends information about the segments it possesses, allowing the server to register the client as a source for those segments. A separate thread is also launched to handle incoming connections and transfers in case of direct peer-to-peer (P2P) file sharing.
+## 2. Concept of the Solution
 
-The client can send a "GET filename" command to the central server to request the desired file. The server searches through its archive, which contains data on the files and their available sources, selects the most appropriate source, and sends this information back to the client. If no peer on the network has the requested file, the client initiates the transfer directly from the central server. If the server returns the address of a peer on the network from which the file should be obtained, the client launches a separate thread that connects to the designated peer and performs the transfer. After the transfer is completed, whether from the server or a peer, the checksum is verified to ensure a correct transfer. If the transfer is successful, the client informs the server that it can now be added to the list of available sources for that file.
+To start, the server application must be launched to manage the entire network. Upon startup, the server prepares the environment and handles client requests.
 
-4. Testing
-To test the system, follow these steps:
+When a user starts the client application, it connects to the central server. If the client requests a file, the server provides information on which peer holds the requested file. If no peer has the file, the client retrieves it from the server; otherwise, it downloads the file from another peer in the network.
 
-Start the central server and several client applications. Initially, none of the clients will possess any files.
-One of the clients requests a file. The server informs the client that the file can only be downloaded from the server, and the transfer is executed.
-Another client requests the same file, but since the file is now available on both the server and the first client, the download will be performed from the first client.
-The first client then requests a different file, which is downloaded from the server. Manually delete some segments of this file from the first client.
-The second client requests this file. For some segments, the source will be the server, and for others, the first client. The test verifies whether the combined transfer from both sources works correctly.
-Manually open the downloaded files to ensure that the content has been preserved during transfer.
-Now that both the first and second clients possess the file, have a third client request the same file. Observe how the server determines from which source the file should be downloaded.
-The system functions as expected, and the peer-to-peer network functionality has been demonstrated successfully.
+## 3. Description of the Solution
+
+When the central server is started:
+- It scans all the files in the system, divides them into 16KB segments, calculates a checksum for each segment, and stores this information in a specific folder.
+- It prepares to listen for incoming client connections, assigning each connected client a dedicated thread for communication.
+- A separate thread monitors client connections, removing any disconnected peers from the list of available segment sources.
+
+When the client application starts:
+- It connects to the central server and sends information about the segments it holds, allowing the server to list the client as a source for these segments.
+- A dedicated thread is launched to handle incoming connections for P2P transfers.
+
+When a client sends a `GET filename` command to the server, the server:
+- Searches its archive for the file and provides the client with the best source (either a peer or the server).
+- If a peer holds the file, the client starts a new thread to download it from the peer. The checksum is verified to ensure a valid transfer, and the server is notified to update the list of available sources for that file.
+
+## 4. Testing
+
+To verify the functionality, follow these steps:
+
+1. Start the central server and several client applications. Initially, no client will hold any files.
+2. One client requests a file, and the server informs the client that it can only be downloaded from the server. The transfer is completed.
+3. A second client requests the same file, but now that the first client holds it, the file is transferred from the first client instead of the server.
+4. The first client requests another file from the server. Manually delete some segments from the file on the first client.
+5. The second client requests the same file. Some segments will be downloaded from the server, and others from the first client. Verify that combined downloading works correctly.
+6. Manually inspect the downloaded files to ensure that the content is correct and intact.
+7. With both the first and second clients holding the file, have a third client request the same file. Observe how the server determines the source for the file transfer.
+
+The system behaves as expected, demonstrating the successful implementation of the P2P network.
+
+---
+
