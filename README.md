@@ -34,7 +34,7 @@ When a client sends a `GET filename` command to the server, the server:
 ## 4. Diagrams
 
 <p align="center">
-  <img src="MSC.png" alt="MSC Diagram" width="400"/>
+  <img src="MSC.png" alt="MSC Diagram" width="350"/>
   <br/>
   <em>MSC Diagram</em>
 </p>
