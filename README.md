@@ -34,13 +34,13 @@ When a client sends a `GET filename` command to the server, the server:
 ## 4. Diagrams
 
 <p align="center">
-  <img src="MSC.png" alt="MSC Diagram"/>
+  <img src="MSC.png" alt="MSC Diagram" width="400"/>
   <br/>
   <em>MSC Diagram</em>
 </p>
 
 <p align="center">
-  <img src="SDL.png" alt="SDL Diagram"/>
+  <img src="SDL.png" alt="SDL Diagram" width="500"/>
   <br/>
   <em>SDL Diagram</em>
 </p>
